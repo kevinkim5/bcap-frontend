@@ -1,24 +1,17 @@
-import axios from "axios"
 import React, { useContext, useEffect, useState } from "react"
-import { Button } from "antd"
 import { googleLogout, useGoogleLogin } from "@react-oauth/google"
+import { Button, Typography } from "antd"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 import { AuthContext } from "../context/AuthContext"
-import { useNavigate } from "react-router-dom"
+
+const { Title } = Typography
 
 export default function Login(props) {
   const authContext = useContext(AuthContext)
   const { setLoggedIn, setUser, setUserProfile, user } = authContext
   const navigate = useNavigate()
-  const [profile, setProfile] = useState()
-
-  const responseOutput = (response) => {
-    console.log(response)
-    setUser(response)
-  }
-  const errorOutput = (error) => {
-    console.log(error)
-  }
 
   const handleLogin = useGoogleLogin({
     onSuccess: (response) => {
@@ -31,7 +24,6 @@ export default function Login(props) {
   const handleLogout = () => {
     console.log("logout")
     googleLogout()
-    setProfile(null)
   }
 
   const callGoogleAPI = async () => {
@@ -46,7 +38,6 @@ export default function Login(props) {
         },
       )
       const { data: userInfo } = response
-      setProfile(userInfo)
       setUserProfile(userInfo)
       setLoggedIn(true)
       navigate("/")
@@ -62,7 +53,18 @@ export default function Login(props) {
   }, [user])
 
   return (
-    <>
+    <div
+      style={{
+        width: "100%",
+        height: "calc(100vh - 96px)",
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Title>Come Chat with me!</Title>
+      <Title level={3}>Get Started</Title>
       <Button onClick={handleLogin}>Sign in with Google 🚀</Button>
       {/* {profile ? (
         <div>
@@ -77,7 +79,7 @@ export default function Login(props) {
       ) : (
         <button onClick={handleLogin}>Sign in with Google 🚀 </button>
       )} */}
-      <Button onClick={handleLogout}>Logout</Button>
-    </>
+      {/* <Button onClick={handleLogout}>Logout</Button> */}
+    </div>
   )
 }
