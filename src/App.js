@@ -15,7 +15,13 @@ function App() {
     <AuthContextProvider>
       <ChatContextProvider>
         <Router>
-          <Layout style={{ height: "100vh", flexDirection: "column" }}>
+          <Layout
+            style={{
+              height: "100vh",
+              flexDirection: "column",
+              overflow: "hidden",
+            }}
+          >
             <Header style={{ height: "48px" }} />
             <Layout>
               <CustomSider />
