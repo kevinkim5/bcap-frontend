@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react"
+import { createContext, useClback, useEffect, useState } from "react"
 import axios from "axios"
 
 export const AuthContext = createContext({
@@ -35,12 +35,11 @@ export function AuthContextProvider(props) {
     <AuthContext.Provider
       value={{
         loggedIn,
-        checkLoginState,
-        user,
-        userProfile,
         setLoggedIn,
         setUser,
         setUserProfile,
+        user,
+        userProfile,
       }}
     >
       {props.children}
