@@ -1,12 +1,13 @@
-import { Card, Col, Input, Layout, List, Row, Typography } from "antd"
-import TextArea from "antd/es/input/TextArea"
-
+import React, { useContext, useEffect, useState } from "react"
+import { Card, Input, Layout, Row, Space } from "antd"
 import axios from "axios"
-import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+
 import ChatCard from "../components/ChatCard"
 import { AuthContext } from "../context/AuthContext"
 import { ChatContext } from "../context/ChatContext"
+
+const { TextArea } = Input
 
 export default function Chat(props) {
   const navigate = useNavigate()
@@ -15,7 +16,7 @@ export default function Chat(props) {
   // Context
   const authContext = useContext(AuthContext)
   const chatContext = useContext(ChatContext)
-  const { allChats, getChatHistory } = chatContext
+  const { allChats, allChatsLoading, getChatHistory } = chatContext
   const { loggedIn, userProfile } = authContext
 
   // States
@@ -28,12 +29,16 @@ export default function Chat(props) {
 
   // Side Effects
   useEffect(() => {
-    if (id && allChats && allChats.length) {
+    if (!id) {
+      setChatId(undefined)
+      setChatHistory([])
+      setQuestionInput("")
+    } else if (id && !allChatsLoading && allChats && allChats.length) {
       const idHistory = allChats.filter((c) => c._id === id)
       setChatId(id)
       setChatHistory(idHistory[0].history)
     }
-  }, [allChats, id])
+  }, [allChats, allChatsLoading, id])
 
   useEffect(() => {
     if (!loggedIn) {
@@ -63,7 +68,12 @@ export default function Chat(props) {
       if (data) {
         setLoadingResponse(false)
         setChatHistory([...data.history])
-        if (!chatId) setChatId(data._id)
+        if (!chatId) {
+          setChatId(data._id)
+          navigate(`/${data._id}`)
+        }
+
+        getChatHistory(userProfile.email)
       } else {
         throw Error
       }
@@ -85,6 +95,8 @@ export default function Chat(props) {
 
   // Handlers
   const handleInputChange = (e) => {
+    console.log(e)
+    console.log(e.target.value)
     setQuestionInput(e.target.value)
   }
 
@@ -109,6 +121,7 @@ export default function Chat(props) {
   ) : (
     <Layout
       style={{
+        backgroundColor: "white",
         justifyContent: "space-between",
         height: "calc(100vh - 96px",
         overflowY: "scroll",
@@ -116,6 +129,7 @@ export default function Chat(props) {
     >
       <Row
         style={{
+          alignItems: "center",
           justifyContent: "center",
           width: "100%",
           height: "calc(100vh - 96px)",
@@ -129,20 +143,22 @@ export default function Chat(props) {
               width: "80%",
             }}
           >
-            {chatHistory.map((history, _idx) => {
-              const { parts, role } = history
-              return (
-                <Row
-                  key={_idx.toString()}
-                  style={{
-                    width: "100%",
-                  }}
-                >
-                  <ChatCard parts={parts} role={role} />
-                </Row>
-              )
-            })}
-            {loadingResponse && <>...Loading</>}
+            <Space direction="vertical" size="middle">
+              {chatHistory.map((history, _idx) => {
+                const { parts, role } = history
+                return (
+                  <Row
+                    key={_idx.toString()}
+                    style={{
+                      width: "100%",
+                    }}
+                  >
+                    <ChatCard parts={parts} role={role} />
+                  </Row>
+                )
+              })}
+              {loadingResponse && <>...Loading</>}
+            </Space>
           </Card>
         ) : (
           <>Start Chatting!</>
@@ -150,9 +166,10 @@ export default function Chat(props) {
       </Row>
       <Row
         style={{
+          alignItems: "center",
           justifyContent: "center",
           width: "100%",
-          position: "fixed",
+          position: "relative",
           bottom: "48px",
         }}
       >
@@ -163,6 +180,10 @@ export default function Chat(props) {
           }}
           placeholder="Enter a prompt here"
           onChange={handleInputChange}
+          onKeyDown={(e) => {
+            console.log(e)
+            if (e.key === "Enter") e.preventDefault()
+          }}
           onPressEnter={handleSearch}
           style={{ width: "60%" }}
           value={questionInput}
