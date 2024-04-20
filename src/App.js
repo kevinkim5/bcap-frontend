@@ -2,27 +2,45 @@ import React from "react"
 import { Layout } from "antd"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
+import CustomSider from "./components/CustomSider"
 import Login from "./pages/Login"
 import Chat from "./pages/Chat"
-const { Header, Sider } = Layout
 import { AuthContextProvider } from "./context/AuthContext"
+import { ChatContextProvider } from "./context/ChatContext"
+
+const { Header, Footer } = Layout
 
 function App() {
   return (
     <AuthContextProvider>
-      <Layout style={{ height: "100vh" }}>
-        <Header />
-        <Layout>
-          <Sider />
-          <Router>
-            <Routes>
-              <Route path="/" element={<Chat />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/:id" element={<Chat />} />
-            </Routes>
-          </Router>
-        </Layout>
-      </Layout>
+      <ChatContextProvider>
+        <Router>
+          <Layout style={{ height: "100vh", flexDirection: "column" }}>
+            <Header style={{ height: "48px" }} />
+            <Layout>
+              <CustomSider />
+              <Layout>
+                <Routes>
+                  <Route path="/" element={<Chat />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/:id" element={<Chat />} />
+                </Routes>
+                <Footer
+                  style={{
+                    height: "48px",
+                    paddingTop: "12px",
+                    paddingBottom: "12px",
+                    textAlign: "center",
+                  }}
+                >
+                  The chatbot may display inaccurate info, including about
+                  people, so double-check its responses.
+                </Footer>
+              </Layout>
+            </Layout>
+          </Layout>
+        </Router>
+      </ChatContextProvider>
     </AuthContextProvider>
   )
 }
