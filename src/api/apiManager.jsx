@@ -24,7 +24,7 @@ export const postAPICall = async (url, dataObj) => {
       formData.append(key, value)
     })
     const res = await baseAPI.post(url, formData)
-    return res
+    return res.data
   } catch (err) {
     console.log(err)
     if (err.response.status === 403) return { isLoggedIn: false }

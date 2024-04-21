@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import React, { useContext } from "react"
 import { Layout } from "antd"
 
 import { AuthContext } from "../context/AuthContext"
@@ -9,19 +9,19 @@ export default function CustomFooter(props) {
   const authContext = useContext(AuthContext)
   const { loggedIn } = authContext
 
-  return !loggedIn ? null : (
+  return (
     <Footer
+      className="footer"
       style={{
-        backgroundColor: "#002140",
-        color: "white",
-        height: "48px",
-        paddingTop: "12px",
-        paddingBottom: "12px",
-        textAlign: "center",
+        backgroundColor: !loggedIn ? "white" : "#002140",
       }}
     >
-      The chatbot may display inaccurate info, including about people, so
-      double-check its responses.
+      {!loggedIn ? null : (
+        <>
+          The chatbot may display inaccurate info, including about people, so
+          double-check its responses.
+        </>
+      )}
     </Footer>
   )
 }

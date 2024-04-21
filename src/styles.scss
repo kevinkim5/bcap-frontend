@@ -1,6 +1,23 @@
+$default-green-color: #0ac985;
+$default-black-color: #0a211a;
+$default-accent-orange: #f9aa3c;
+$default-accent-blue: #22b0d2;
 $header-height: 48px;
 $footer-height: 48px;
 $default-page-height: calc(100vh - $header-height - $footer-height);
+$custom-linear-gradient: linear-gradient(
+  74deg,
+  #4285f4 0,
+  #9b72cb 9%,
+  #d96570 20%,
+  #d96570 24%,
+  #9b72cb 35%,
+  #4285f4 44%,
+  #9b72cb 50%,
+  #d96570 56%,
+  #fff 75%,
+  #fff 100%
+);
 
 body {
   margin: 0;
@@ -16,6 +33,10 @@ code {
     monospace;
 }
 
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 .chat {
   background-color: white;
   justify-content: center;
@@ -28,17 +49,67 @@ code {
     justify-content: center;
     width: 100%;
   }
+
+  .hello {
+    background: $custom-linear-gradient;
+    background-size: 300% 300%;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.flex-center {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.footer {
+  color: white;
+  height: $footer-height;
+  padding-bottom: 12px;
+  padding-top: 12px;
+  text-align: center;
+}
+
+.header {
+  align-items: center;
+  background-color: $default-green-color;
+  display: flex;
+  height: $header-height;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .title {
+    color: $default-black-color;
+    margin: 0;
+  }
 }
 
 .login {
   align-items: center;
+  background-color: white;
   flex-direction: column;
   display: flex;
   height: $default-page-height;
   width: 100%;
   justify-content: center;
 
+  .title-wrapper {
+    margin-left: -25vw;
+  }
+
   .main-title {
-    color: red;
+    background: $custom-linear-gradient;
+    background-size: 300% 300%;
+    background-clip: text;
+    color: transparent;
+    font-size: 98px;
+    margin-bottom: 16px;
+    margin-top: 0px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }

@@ -21,17 +21,9 @@ export default function CustomHeader(props) {
   }
 
   return (
-    <Header
-      style={{
-        justifyContent: "space-between",
-        alignItems: "center",
-        display: "flex",
-        height: "48px",
-        flexDirection: "row",
-      }}
-    >
-      <Title level={3} style={{ color: "white", margin: 0 }}>
-        Buddy ChatBot
+    <Header className="header">
+      <Title level={3} className="title">
+        Brain Bot
       </Title>
       {loggedIn ? (
         <Popover
