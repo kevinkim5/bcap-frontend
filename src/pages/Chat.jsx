@@ -4,6 +4,7 @@ import axios from "axios"
 import { useNavigate, useParams } from "react-router-dom"
 
 import ChatCard from "../components/ChatCard"
+import GenericSpinner from "../components/GenericSpinner"
 import { AuthContext } from "../context/AuthContext"
 import { ChatContext } from "../context/ChatContext"
 
@@ -94,11 +95,8 @@ export default function Chat(props) {
   }
 
   // Handlers
-  const handleInputChange = (e) => {
-    console.log(e)
-    console.log(e.target.value)
-    setQuestionInput(e.target.value)
-  }
+  const handleInputChange = (e) => setQuestionInput(e.target.value)
+  const handleKeyDown = (e) => e.key === "Enter" && e.preventDefault()
 
   const handleSearch = () => {
     setChatHistory((prevHistory) => {
@@ -117,7 +115,7 @@ export default function Chat(props) {
   }
 
   return loading ? (
-    <>Loading...</>
+    <GenericSpinner size="large" />
   ) : (
     <Layout
       style={{
@@ -180,10 +178,7 @@ export default function Chat(props) {
           }}
           placeholder="Enter a prompt here"
           onChange={handleInputChange}
-          onKeyDown={(e) => {
-            console.log(e)
-            if (e.key === "Enter") e.preventDefault()
-          }}
+          onKeyDown={handleKeyDown}
           onPressEnter={handleSearch}
           style={{ width: "60%" }}
           value={questionInput}
