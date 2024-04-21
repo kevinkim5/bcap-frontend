@@ -8,6 +8,7 @@ import ChatCard from "../components/ChatCard"
 import GenericSpinner from "../components/GenericSpinner"
 import { AuthContext } from "../context/AuthContext"
 import { ChatContext } from "../context/ChatContext"
+import { postAPICall } from "../api/apiManager"
 
 const { TextArea } = Input
 
@@ -43,10 +44,19 @@ export default function Chat(props) {
       )
       askFormData.append("email", userProfile.email)
       if (chatId) askFormData.append("chatId", chatId)
-      const res = await axios.post(
-        `${process.env.REACT_APP_SERVER_URL}/chat`,
-        askFormData,
-      )
+      // const res = await axios.post(
+      //   `${process.env.REACT_APP_SERVER_URL}/chat`,
+      //   askFormData,
+      // )
+
+      const dataObj = {
+        question,
+        history: JSON.stringify(history.filter((h) => h.role !== "error")),
+        email: userProfile.email,
+      }
+      if (chatId) dataObj.chatId = chatId
+      const res = await postAPICall("/chat", dataObj)
+
       const { data } = res
 
       if (data) {
@@ -102,6 +112,7 @@ export default function Chat(props) {
 
   // Side Effects
   useEffect(() => {
+    console.log(id)
     if (!id) {
       setChatId(undefined)
       setChatHistory([])
@@ -118,12 +129,8 @@ export default function Chat(props) {
   }, [chatHistory])
 
   useEffect(() => {
-    if (!loggedIn) {
-      navigate("/login")
-    } else {
-      setLoading(false)
-    }
-  }, [loggedIn])
+    if (loggedIn && userProfile) setLoading(false)
+  }, [loggedIn, userProfile])
 
   return loading ? (
     <GenericSpinner size="large" />
@@ -143,7 +150,7 @@ export default function Chat(props) {
             {chatHistory.map((history, _idx) => {
               const { parts, role } = history
               return (
-                <>
+                <React.Fragment key={_idx.toString()}>
                   <Row
                     key={_idx.toString()}
                     style={{
@@ -155,7 +162,7 @@ export default function Chat(props) {
                   {_idx === chatHistory.length - 1 ? (
                     <div ref={messagesEndRef}></div>
                   ) : null}
-                </>
+                </React.Fragment>
               )
             })}
             {loadingResponse && <>...Loading</>}
