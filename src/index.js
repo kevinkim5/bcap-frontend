@@ -1,6 +1,7 @@
 import React from "react"
 import { GoogleOAuthProvider } from "@react-oauth/google"
-import "./index.css"
+
+import "./styles.scss"
 import App from "./App"
 import reportWebVitals from "./reportWebVitals"
 import { sendToVercelAnalytics } from "./vitals"
