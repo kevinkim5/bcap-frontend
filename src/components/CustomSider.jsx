@@ -13,7 +13,7 @@ const { Title } = Typography
 export default function CustomSider(props) {
   const location = useLocation()
   const navigate = useNavigate()
-  console.log(location.pathname)
+
   // Context
   const authContext = useContext(AuthContext)
   const chatContext = useContext(ChatContext)
@@ -24,7 +24,6 @@ export default function CustomSider(props) {
   const [collapsed, setCollapsed] = useState(true)
 
   const handleClickPastChat = (chatId) => {
-    console.log(chatId)
     navigate(`/${chatId}`)
   }
 
@@ -63,9 +62,9 @@ export default function CustomSider(props) {
         <Row style={{ padding: "0px 16px" }}>
           <Title level={5}>Recent</Title>
           <Row style={{ width: "100%" }}>
-            {loggedIn && allChatsLoading ? (
+            {allChatsLoading ? (
               <GenericSpinner extraStyle={{ paddingTop: "10px" }} />
-            ) : loggedIn && allChats.length ? (
+            ) : allChats.length ? (
               <List
                 dataSource={allChats}
                 renderItem={(item) => {
