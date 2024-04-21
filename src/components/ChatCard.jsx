@@ -14,7 +14,7 @@ export default function ChatCard(props) {
   const textParts = parts.map((x) => x.text)
 
   const getAvatarContent = () => {
-    console.log(userProfile.picture)
+    // console.log(userProfile.picture)
     // if (role === "user" && userProfile.picture) {
     //   const imgrStr = userProfile.toString()
     //   return <Avatar src={imgrStr} />
