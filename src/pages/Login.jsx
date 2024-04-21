@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from "react"
-import { googleLogout, useGoogleLogin } from "@react-oauth/google"
+import { useGoogleLogin } from "@react-oauth/google"
 import { Button, Typography } from "antd"
 import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
 import { AuthContext } from "../context/AuthContext"
 import GenericSpinner from "../components/GenericSpinner"
+import { GoogleCircleFilled } from "@ant-design/icons"
 
 const { Title } = Typography
 
@@ -58,18 +59,36 @@ export default function Login(props) {
       {loggingIn ? (
         <GenericSpinner customText="Logging In" />
       ) : (
-        <>
-          <Title className="main-title">Come Chat with me!</Title>
-          <Title level={3}>Get Started</Title>
+        <div className="title-wrapper">
+          <Title className="main-title">Brain Bot</Title>
+          <Title level={3}>
+            Unlock your creative potential and reach peak productivity
+          </Title>
+          <>Chat to start writing, planning, learning and more with Brain Bot</>
           <Button
             onClick={(e) => {
               setLoggingIn(true)
               handleLogin()
             }}
+            icon={
+              <GoogleCircleFilled
+                style={{ color: "#0a211a", fontSize: "30px" }}
+              />
+            }
+            type="primary"
+            // size="large"
+            style={{
+              height: "fit-content",
+              display: "flex",
+              alignItems: "center",
+              marginTop: "10px",
+            }}
           >
-            Sign in with Google 🚀
+            <Typography.Text style={{ color: "#0a211a", fontSize: "20px" }}>
+              Sign in with Google
+            </Typography.Text>
           </Button>
-        </>
+        </div>
       )}
     </div>
   )
