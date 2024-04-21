@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext, useEffect, useState, useRef } from "react"
 import { Card, Input, Layout, Row, Space } from "antd"
 import axios from "axios"
+import * as DOMPurify from "dompurify"
 import { useNavigate, useParams } from "react-router-dom"
 
 import ChatCard from "../components/ChatCard"
@@ -20,6 +21,9 @@ export default function Chat(props) {
   const { allChats, allChatsLoading, getChatHistory } = chatContext
   const { loggedIn, userProfile } = authContext
 
+  // Refs
+  const messagesEndRef = useRef(null)
+
   // States
   const [chatHistory, setChatHistory] = useState([])
   const [chatId, setChatId] = useState(id)
@@ -27,27 +31,6 @@ export default function Chat(props) {
   const [loadingResponse, setLoadingResponse] = useState(false)
   const [questionInput, setQuestionInput] = useState("")
   const [responseError, setResponseError] = useState(false)
-
-  // Side Effects
-  useEffect(() => {
-    if (!id) {
-      setChatId(undefined)
-      setChatHistory([])
-      setQuestionInput("")
-    } else if (id && !allChatsLoading && allChats && allChats.length) {
-      const idHistory = allChats.filter((c) => c._id === id)
-      setChatId(id)
-      setChatHistory(idHistory[0].history)
-    }
-  }, [allChats, allChatsLoading, id])
-
-  useEffect(() => {
-    if (!loggedIn) {
-      navigate("/login")
-    } else {
-      setLoading(false)
-    }
-  }, [loggedIn])
 
   // API calls
   const getResponse = async (question, history) => {
@@ -64,8 +47,8 @@ export default function Chat(props) {
         `${process.env.REACT_APP_SERVER_URL}/chat`,
         askFormData,
       )
-      console.log(res)
       const { data } = res
+
       if (data) {
         setLoadingResponse(false)
         setChatHistory([...data.history])
@@ -95,7 +78,10 @@ export default function Chat(props) {
   }
 
   // Handlers
-  const handleInputChange = (e) => setQuestionInput(e.target.value)
+  const handleInputChange = (e) => {
+    const cleanInput = DOMPurify.sanitize(e.target.value)
+    setQuestionInput(cleanInput)
+  }
   const handleKeyDown = (e) => e.key === "Enter" && e.preventDefault()
 
   const handleSearch = () => {
@@ -114,37 +100,50 @@ export default function Chat(props) {
     setQuestionInput("")
   }
 
+  // Side Effects
+  useEffect(() => {
+    if (!id) {
+      setChatId(undefined)
+      setChatHistory([])
+      setQuestionInput("")
+    } else if (id && !allChatsLoading && allChats && allChats.length) {
+      const idHistory = allChats.filter((c) => c._id === id)
+      setChatId(id)
+      setChatHistory(idHistory[0].history)
+    }
+  }, [allChats, allChatsLoading, id])
+
+  useEffect(() => {
+    messagesEndRef?.current?.scrollIntoView()
+  }, [chatHistory])
+
+  useEffect(() => {
+    if (!loggedIn) {
+      navigate("/login")
+    } else {
+      setLoading(false)
+    }
+  }, [loggedIn])
+
   return loading ? (
     <GenericSpinner size="large" />
   ) : (
-    <Layout
-      style={{
-        backgroundColor: "white",
-        justifyContent: "space-between",
-        height: "calc(100vh - 96px",
-        overflowY: "scroll",
-      }}
-    >
-      <Row
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          height: "calc(100vh - 96px)",
-        }}
-      >
+    <Layout className="chat">
+      <Row className="messages-wrapper">
         {chatHistory.length ? (
-          <Card
+          <Space
+            direction="vertical"
+            size="middle"
             style={{
-              height: "calc(100vh - 96px)",
+              height: "calc(100% - 96px)",
               overflowY: "scroll",
               width: "80%",
             }}
           >
-            <Space direction="vertical" size="middle">
-              {chatHistory.map((history, _idx) => {
-                const { parts, role } = history
-                return (
+            {chatHistory.map((history, _idx) => {
+              const { parts, role } = history
+              return (
+                <>
                   <Row
                     key={_idx.toString()}
                     style={{
@@ -153,11 +152,14 @@ export default function Chat(props) {
                   >
                     <ChatCard parts={parts} role={role} />
                   </Row>
-                )
-              })}
-              {loadingResponse && <>...Loading</>}
-            </Space>
-          </Card>
+                  {_idx === chatHistory.length - 1 ? (
+                    <div ref={messagesEndRef}></div>
+                  ) : null}
+                </>
+              )
+            })}
+            {loadingResponse && <>...Loading</>}
+          </Space>
         ) : (
           <>Start Chatting!</>
         )}
@@ -182,7 +184,7 @@ export default function Chat(props) {
           onPressEnter={handleSearch}
           style={{ width: "60%" }}
           value={questionInput}
-        ></TextArea>
+        />
       </Row>
     </Layout>
   )
