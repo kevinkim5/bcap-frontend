@@ -14,9 +14,9 @@ const { Header, Footer } = Layout
 
 function App() {
   return (
-    <AuthContextProvider>
-      <ChatContextProvider>
-        <Router>
+    <Router>
+      <AuthContextProvider>
+        <ChatContextProvider>
           <Layout
             style={{
               height: "100vh",
@@ -37,9 +37,9 @@ function App() {
               </Layout>
             </Layout>
           </Layout>
-        </Router>
-      </ChatContextProvider>
-    </AuthContextProvider>
+        </ChatContextProvider>
+      </AuthContextProvider>
+    </Router>
   )
 }
 
