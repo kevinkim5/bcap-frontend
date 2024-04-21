@@ -1,0 +1,44 @@
+$header-height: 48px;
+$footer-height: 48px;
+$default-page-height: calc(100vh - $header-height - $footer-height);
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.chat {
+  background-color: white;
+  justify-content: center;
+  height: $default-page-height;
+  overflow: hidden;
+
+  .messages-wrapper {
+    align-items: center;
+    height: $default-page-height;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.login {
+  align-items: center;
+  flex-direction: column;
+  display: flex;
+  height: $default-page-height;
+  width: 100%;
+  justify-content: center;
+
+  .main-title {
+    color: red;
+  }
+}
