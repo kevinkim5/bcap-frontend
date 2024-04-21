@@ -1,7 +1,10 @@
-import { AuthContext } from "../context/AuthContext"
+import { useContext } from "react"
 import { RobotOutlined, UserOutlined } from "@ant-design/icons"
 import { Card } from "antd"
-import { useContext } from "react"
+import Markdown from "react-markdown"
+
+import { AuthContext } from "../context/AuthContext"
+
 const { Avatar, Meta } = Card
 
 export default function ChatCard(props) {
@@ -11,7 +14,6 @@ export default function ChatCard(props) {
   const textParts = parts.map((x) => x.text)
 
   const getAvatarContent = () => {
-    console.log(userProfile.picture)
     // if (role === "user" && userProfile.picture) {
     //   const imgrStr = userProfile.toString()
     //   return <Avatar src={imgrStr} />
@@ -31,7 +33,7 @@ export default function ChatCard(props) {
       }}
     >
       <Meta avatar={getAvatarContent()}></Meta>
-      {textParts.join(" ")}
+      <Markdown>{textParts.join(" ")}</Markdown>
     </Card>
   )
 }
