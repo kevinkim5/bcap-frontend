@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react"
-import axios from "axios"
+
 import { API_PATHS } from "../constants"
+import { getAPICall } from "../api/apiManager"
 
 export const ChatContext = createContext({
   allChats: [],
@@ -16,14 +17,12 @@ export function ChatContextProvider(props) {
   const getChatHistory = async (email) => {
     try {
       setAllChatsLoading(true)
-      const res = await axios.get(
-        `${process.env.REACT_APP_SERVER_URL}/${API_PATHS.HISTORY}/${email}`,
-      )
-      const { data } = res
+      const data = await getAPICall(`/${API_PATHS.HISTORY}/${email}`)
       if (data) setAllChats(data)
       setAllChatsLoading(false)
     } catch (err) {
       console.log(err)
+      setAllChatsLoading(false)
     }
   }
 
