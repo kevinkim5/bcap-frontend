@@ -5,6 +5,19 @@ $default-accent-blue: #22b0d2;
 $header-height: 48px;
 $footer-height: 48px;
 $default-page-height: calc(100vh - $header-height - $footer-height);
+$custom-linear-gradient: linear-gradient(
+  74deg,
+  #4285f4 0,
+  #9b72cb 9%,
+  #d96570 20%,
+  #d96570 24%,
+  #9b72cb 35%,
+  #4285f4 44%,
+  #9b72cb 50%,
+  #d96570 56%,
+  #fff 75%,
+  #fff 100%
+);
 
 body {
   margin: 0;
@@ -38,19 +51,7 @@ code {
   }
 
   .hello {
-    background: linear-gradient(
-      74deg,
-      #4285f4 0,
-      #9b72cb 9%,
-      #d96570 20%,
-      #d96570 24%,
-      #9b72cb 35%,
-      #4285f4 44%,
-      #9b72cb 50%,
-      #d96570 56%,
-      #fff 75%,
-      #fff 100%
-    );
+    background: $custom-linear-gradient;
     background-size: 300% 300%;
     color: transparent;
     background-clip: text;
@@ -96,7 +97,19 @@ code {
   width: 100%;
   justify-content: center;
 
+  .title-wrapper {
+    margin-left: -25vw;
+  }
+
   .main-title {
-    color: red;
+    background: $custom-linear-gradient;
+    background-size: 300% 300%;
+    background-clip: text;
+    color: transparent;
+    font-size: 98px;
+    margin-bottom: 16px;
+    margin-top: 0px;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 }
