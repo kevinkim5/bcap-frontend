@@ -1,43 +1,29 @@
-import { useContext, useEffect, useState } from "react"
-import { Button, Layout, List, Row, Typography } from "antd"
-import { useLocation, useNavigate } from "react-router-dom"
-
-import { AuthContext } from "../context/AuthContext"
-import { ChatContext } from "../context/ChatContext"
+import React, { useContext, useState } from "react"
 import { PlusCircleOutlined } from "@ant-design/icons"
-import GenericSpinner from "./GenericSpinner"
+import { Button, Layout, Row } from "antd"
+import { useNavigate } from "react-router-dom"
+
+import ConversationList from "./ConversationList"
+import { AuthContext } from "../context/AuthContext"
 
 const { Sider } = Layout
-const { Title } = Typography
 
 export default function CustomSider(props) {
-  const location = useLocation()
   const navigate = useNavigate()
 
   // Context
   const authContext = useContext(AuthContext)
-  const chatContext = useContext(ChatContext)
   const { loggedIn, user, userProfile } = authContext
-  const { allChats, allChatsLoading, getChatHistory } = chatContext
 
   // State
   const [collapsed, setCollapsed] = useState(true)
-
-  const handleClickPastChat = (chatId) => {
-    navigate(`/${chatId}`)
-  }
-
-  useEffect(() => {
-    if (loggedIn && userProfile.email) {
-      getChatHistory(userProfile.email)
-    }
-  }, [loggedIn, userProfile])
 
   return !loggedIn ? null : (
     <Sider
       collapsed={collapsed}
       collapsible
       onCollapse={(collapsed) => setCollapsed(collapsed)}
+      width={"20%"}
       style={{ backgroundColor: "#f0f4f9" }}
     >
       <Row
@@ -46,6 +32,7 @@ export default function CustomSider(props) {
           padding: "16px 0px",
           left: "16px",
           position: "relative",
+          height: "72px",
         }}
       >
         <Button
@@ -54,34 +41,12 @@ export default function CustomSider(props) {
             navigate("/")
           }}
           size="large"
+          // type="secondary"
         >
           {collapsed ? null : "New Chat"}
         </Button>
       </Row>
-      {collapsed ? null : (
-        <Row style={{ padding: "0px 16px" }}>
-          <Title level={5}>Recent</Title>
-          <Row style={{ width: "100%" }}>
-            {allChatsLoading ? (
-              <GenericSpinner extraStyle={{ paddingTop: "10px" }} />
-            ) : allChats.length ? (
-              <List
-                dataSource={allChats}
-                renderItem={(item) => {
-                  return (
-                    <List.Item
-                      onClick={() => handleClickPastChat(item._id)}
-                      style={{ cursor: "pointer" }}
-                    >
-                      <Typography.Text>{item.title}</Typography.Text>
-                    </List.Item>
-                  )
-                }}
-              />
-            ) : null}
-          </Row>
-        </Row>
-      )}
+      {collapsed ? null : <ConversationList />}
     </Sider>
   )
 }

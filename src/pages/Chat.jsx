@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState, useRef } from "react"
-import { Card, Input, Layout, Row, Space } from "antd"
-import axios from "axios"
+import { Card, Input, Layout, Row, Space, Typography } from "antd"
 import * as DOMPurify from "dompurify"
 import { useNavigate, useParams } from "react-router-dom"
 
+import { postAPICall } from "../api/apiManager"
 import ChatCard from "../components/ChatCard"
 import GenericSpinner from "../components/GenericSpinner"
 import { AuthContext } from "../context/AuthContext"
 import { ChatContext } from "../context/ChatContext"
-import { postAPICall } from "../api/apiManager"
+import Paragraph from "antd/es/skeleton/Paragraph"
 
 const { TextArea } = Input
+const { Title } = Typography
 
 export default function Chat(props) {
   const navigate = useNavigate()
@@ -55,9 +56,7 @@ export default function Chat(props) {
         email: userProfile.email,
       }
       if (chatId) dataObj.chatId = chatId
-      const res = await postAPICall("/chat", dataObj)
-
-      const { data } = res
+      const data = await postAPICall("/chat", dataObj)
 
       if (data) {
         setLoadingResponse(false)
@@ -168,7 +167,10 @@ export default function Chat(props) {
             {loadingResponse && <>...Loading</>}
           </Space>
         ) : (
-          <>Start Chatting!</>
+          <div>
+            <Title className="hello">Hello, {userProfile.name}</Title>
+            <Title level={3}>How can I help you today?</Title>
+          </div>
         )}
       </Row>
       <Row
