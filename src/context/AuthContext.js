@@ -1,40 +1,73 @@
 import { createContext, useEffect, useState } from "react"
-import axios from "axios"
+import { googleLogout } from "@react-oauth/google"
+
+import { useNavigate } from "react-router-dom"
+import { getAPICall, postAPICall } from "../api/apiManager"
 
 export const AuthContext = createContext({
-  loggedIn: null,
   checkLoginState: null,
-  user: null,
+  handleLogout: null,
+  loggedIn: null,
   setLoggedIn: null,
+  user: null,
 })
 
 export function AuthContextProvider(props) {
+  const navigate = useNavigate()
   const [loggedIn, setLoggedIn] = useState(null)
   const [user, setUser] = useState(null)
   const [userProfile, setUserProfile] = useState(null)
 
+  const handleLogout = async () => {
+    const res = await getAPICall("/logout")
+    googleLogout()
+    if (!res.loggedIn) {
+      setLoggedIn(false)
+      setUserProfile(null)
+      navigate("/login")
+    }
+  }
+
   const updateDBWithUser = async () => {
-    const userFormData = new FormData()
-    userFormData.append("name", userProfile.name)
-    userFormData.append("email", userProfile.email)
-    const res = await axios.post(
-      `${process.env.REACT_APP_SERVER_URL}/users/login`,
-      userFormData,
-    )
-    console.log(res)
+    const dataObj = {
+      name: userProfile.name,
+      email: userProfile.email,
+    }
+    if (userProfile.picture) dataObj.picture = userProfile.picture
+    const res = await postAPICall("/login", dataObj)
+    setLoggedIn(true)
   }
 
   useEffect(() => {
-    console.log(userProfile)
+    // check session on load
+    const checkSession = async () => {
+      const res = await getAPICall("/session")
+      const { isLoggedIn, email, name, picture } = res
+      if (isLoggedIn) {
+        setUserProfile({
+          email,
+          name,
+          picture,
+        })
+        setLoggedIn(true)
+      } else {
+        navigate("/login")
+      }
+    }
+    checkSession()
+  }, [])
+
+  useEffect(() => {
     if (userProfile && userProfile.name && userProfile.email) {
       updateDBWithUser()
     }
-  }, [userProfile])
+  }, [loggedIn, userProfile])
 
   return (
     <AuthContext.Provider
       value={{
         loggedIn,
+        handleLogout,
         setLoggedIn,
         setUser,
         setUserProfile,
