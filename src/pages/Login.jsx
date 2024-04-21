@@ -5,28 +5,29 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 
 import { AuthContext } from "../context/AuthContext"
+import GenericSpinner from "../components/GenericSpinner"
 
 const { Title } = Typography
 
 export default function Login(props) {
   const authContext = useContext(AuthContext)
-  const { setLoggedIn, setUser, setUserProfile, user } = authContext
+  const { loggedIn, setUser, setUserProfile } = authContext
   const navigate = useNavigate()
+
+  const [loggingIn, setLoggingIn] = useState(false)
 
   const handleLogin = useGoogleLogin({
     onSuccess: (response) => {
-      console.log("login success")
+      callGoogleAPI(response)
       setUser(response)
     },
-    onError: (error) => console.log(`Login Failed: ${error}`),
+    onError: (error) => {
+      console.log(`Login Failed: ${error}`)
+      setLoggingIn(false)
+    },
   })
 
-  const handleLogout = () => {
-    console.log("logout")
-    googleLogout()
-  }
-
-  const callGoogleAPI = async () => {
+  const callGoogleAPI = async (user) => {
     try {
       const response = await axios.get(
         `https://www.googleapis.com/oauth2/v2/userinfo?client_id=${user.access_token}`,
@@ -39,47 +40,37 @@ export default function Login(props) {
       )
       const { data: userInfo } = response
       setUserProfile(userInfo)
-      setLoggedIn(true)
-      navigate("/")
     } catch (err) {
       console.log(err)
+      setUser(null)
+      setUserProfile(null)
+      navigate("/login")
     }
   }
 
   useEffect(() => {
-    if (user) {
-      callGoogleAPI()
-    }
-  }, [user])
+    if (loggedIn) navigate("/")
+    setLoggingIn(false)
+  }, [loggedIn])
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "calc(100vh - 96px)",
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <Title>Come Chat with me!</Title>
-      <Title level={3}>Get Started</Title>
-      <Button onClick={handleLogin}>Sign in with Google 🚀</Button>
-      {/* {profile ? (
-        <div>
-          <img src={profile.picture} alt="" />
-          <h3>User Logged in</h3>
-          <p>Name: {profile.name}</p>
-          <p>Email Address: {profile.email}</p>
-          <br />
-          <br />
-          <button onClick={handleLogout}>Log out</button>
-        </div>
+    <div className="login">
+      {loggingIn ? (
+        <GenericSpinner customText="Logging In" />
       ) : (
-        <button onClick={handleLogin}>Sign in with Google 🚀 </button>
-      )} */}
-      {/* <Button onClick={handleLogout}>Logout</Button> */}
+        <>
+          <Title className="main-title">Come Chat with me!</Title>
+          <Title level={3}>Get Started</Title>
+          <Button
+            onClick={(e) => {
+              setLoggingIn(true)
+              handleLogin()
+            }}
+          >
+            Sign in with Google 🚀
+          </Button>
+        </>
+      )}
     </div>
   )
 }
