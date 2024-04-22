@@ -8,6 +8,9 @@ This project is a React frontend for a functional chatbot that leverages Generat
 1. Set up environment variables in Vercel
 1. Vercel will automatically build and deploy your project when it detects changes pushed to your main branch.
 
+### App URL
+https://bcap-frontend.vercel.app
+
 ## Development
 1. Clone the repository
 1. Install dependencies
