@@ -18,8 +18,9 @@ export default function CustomFooter(props) {
     >
       {!loggedIn ? null : (
         <>
-          The chatbot may display inaccurate info, including about people, so
-          double-check its responses.
+          Brain Bot may produce inaccurate information about peoples places or
+          facts. Please refer to to the {`firm's`} guidelines on use of
+          generative AI.
         </>
       )}
     </Footer>
