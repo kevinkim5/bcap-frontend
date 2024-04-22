@@ -119,7 +119,7 @@ export default function Chat() {
   }, [allChats, allChatsLoading, id])
 
   useEffect(() => {
-    messagesEndRef?.current?.scrollIntoView()
+    messagesEndRef?.current?.scrollIntoView({ behavior: "smooth" })
   }, [chatHistory])
 
   useEffect(() => {
