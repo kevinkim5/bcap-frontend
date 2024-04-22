@@ -1,40 +1,60 @@
-import { useContext } from "react"
+import React, { useContext, useState } from "react"
 import { RobotOutlined, UserOutlined } from "@ant-design/icons"
-import { Card } from "antd"
+import { Avatar, Button, Card, Row, Skeleton } from "antd"
 import Markdown from "react-markdown"
 
 import { AuthContext } from "../context/AuthContext"
 
-const { Avatar, Meta } = Card
-
 export default function ChatCard(props) {
-  const authContext = useContext(AuthContext)
-  const { userProfile } = authContext
-  const { parts, role } = props
+  const { idx, parts, cardRole } = props
   const textParts = parts.map((x) => x.text)
 
+  const authContext = useContext(AuthContext)
+  const { userProfile } = authContext
+
+  const [expanded, setExpanded] = useState(false)
+
   const getAvatarContent = () => {
-    // console.log(userProfile.picture)
-    // if (role === "user" && userProfile.picture) {
-    //   const imgrStr = userProfile.toString()
-    //   return <Avatar src={imgrStr} />
-    // } else
-    if (role === "user") {
-      return <UserOutlined />
+    if (cardRole === "user") {
+      return (
+        <Avatar
+          className="avatar"
+          src={userProfile.picture ? userProfile.picture : undefined}
+          // put at end, icon is backup
+          icon={<UserOutlined />}
+        />
+      )
     }
-    return <RobotOutlined />
+    return <Avatar icon={<RobotOutlined />} style={{ background: "#0ac985" }} />
   }
-  return role === "error" ? (
-    <>Error Loading Response!</>
-  ) : (
-    <Card
-      style={{
-        color: role === "user" ? "blue" : "black",
-        width: "100%",
-      }}
-    >
-      <Meta avatar={getAvatarContent()}></Meta>
-      <Markdown>{textParts.join(" ")}</Markdown>
-    </Card>
+
+  const getCardContent = () => {
+    switch (cardRole) {
+      case "user":
+      case "model":
+        return <Markdown>{textParts.join(" ")}</Markdown>
+
+      case "loading":
+        return <Skeleton active />
+
+      case "error":
+        return <>Error Loading Response!</>
+    }
+  }
+
+  return (
+    <Row key={idx.toString()} className="chat-card-wrapper">
+      <Card
+        className="chat-card"
+        // extra={
+        //   <Button onClick={() => setExpanded(!expanded)}>
+        //     {expanded ? "Hide" : "Show More"}
+        //   </Button>
+        // }
+        title={getAvatarContent()}
+      >
+        {getCardContent()}
+      </Card>
+    </Row>
   )
 }

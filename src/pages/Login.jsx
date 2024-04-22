@@ -61,10 +61,12 @@ export default function Login(props) {
       ) : (
         <div className="title-wrapper">
           <Title className="main-title">Brain Bot</Title>
-          <Title level={3}>
+          <Title level={3} className="sub-title">
             Unlock your creative potential and reach peak productivity
           </Title>
-          <>Chat to start writing, planning, learning and more with Brain Bot</>
+          <div className="sub-title">
+            Chat to start writing, planning, learning and more with Brain Bot
+          </div>
           <Button
             onClick={(e) => {
               setLoggingIn(true)
@@ -76,11 +78,12 @@ export default function Login(props) {
               />
             }
             type="primary"
-            // size="large"
+            className="button-sign-in"
             style={{
               height: "fit-content",
               display: "flex",
               alignItems: "center",
+              color: "white",
               marginTop: "10px",
             }}
           >

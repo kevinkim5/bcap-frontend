@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { Avatar, Button, Card, Layout, Menu, Popover, Typography } from "antd"
+import { Avatar, Button, Layout, Popover, Typography } from "antd"
 
 import { UserOutlined } from "@ant-design/icons"
 import { AuthContext } from "../context/AuthContext"
@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext"
 const { Header } = Layout
 const { Title } = Typography
 
-export default function CustomHeader(props) {
+export default function CustomHeader() {
   const authContext = useContext(AuthContext)
   const { handleLogout, loggedIn, userProfile } = authContext
 
@@ -31,7 +31,20 @@ export default function CustomHeader(props) {
           placement="bottomRight"
           title={userProfile.name}
         >
-          <Button icon={<UserOutlined />} />
+          <Avatar
+            className="avatar"
+            src={userProfile.picture ? userProfile.picture : undefined}
+            size={{
+              xs: 24,
+              sm: 32,
+              md: 36,
+              lg: 36,
+              xl: 36,
+              xxl: 36,
+            }}
+            // put at end, icon is backup
+            icon={<UserOutlined className="user-outlined" />}
+          />
         </Popover>
       ) : null}
     </Header>

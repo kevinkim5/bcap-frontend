@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react"
-import { Card, Input, Layout, Row, Space, Typography } from "antd"
-import * as DOMPurify from "dompurify"
+import { Layout, Row, Space, Typography } from "antd"
 import { useNavigate, useParams } from "react-router-dom"
 
 import { postAPICall } from "../api/apiManager"
@@ -8,12 +7,12 @@ import ChatCard from "../components/ChatCard"
 import GenericSpinner from "../components/GenericSpinner"
 import { AuthContext } from "../context/AuthContext"
 import { ChatContext } from "../context/ChatContext"
-import Paragraph from "antd/es/skeleton/Paragraph"
 
-const { TextArea } = Input
+import PromptInput from "../components/PromptInput"
+
 const { Title } = Typography
 
-export default function Chat(props) {
+export default function Chat() {
   const navigate = useNavigate()
   const { id } = useParams()
 
@@ -25,6 +24,7 @@ export default function Chat(props) {
 
   // Refs
   const messagesEndRef = useRef(null)
+  const promptInputRef = useRef(null)
 
   // States
   const [chatHistory, setChatHistory] = useState([])
@@ -32,7 +32,13 @@ export default function Chat(props) {
   const [loading, setLoading] = useState(true)
   const [loadingResponse, setLoadingResponse] = useState(false)
   const [questionInput, setQuestionInput] = useState("")
-  const [responseError, setResponseError] = useState(false)
+
+  // Helper functions
+  const getChatListHeight = () => {
+    const offsetHeight =
+      promptInputRef?.current?.resizableTextArea?.textArea?.offsetHeight || 66
+    return `calc(100vh - 96px - ${offsetHeight + 20}px)`
+  }
 
   // API calls
   const getResponse = async (question, history) => {
@@ -45,10 +51,6 @@ export default function Chat(props) {
       )
       askFormData.append("email", userProfile.email)
       if (chatId) askFormData.append("chatId", chatId)
-      // const res = await axios.post(
-      //   `${process.env.REACT_APP_SERVER_URL}/chat`,
-      //   askFormData,
-      // )
 
       const dataObj = {
         question,
@@ -73,7 +75,6 @@ export default function Chat(props) {
     } catch (err) {
       console.log(err)
       setLoadingResponse(false)
-      setResponseError(true)
       setChatHistory((prevHistory) => {
         return [
           ...prevHistory,
@@ -87,12 +88,6 @@ export default function Chat(props) {
   }
 
   // Handlers
-  const handleInputChange = (e) => {
-    const cleanInput = DOMPurify.sanitize(e.target.value)
-    setQuestionInput(cleanInput)
-  }
-  const handleKeyDown = (e) => e.key === "Enter" && e.preventDefault()
-
   const handleSearch = () => {
     setChatHistory((prevHistory) => {
       getResponse(questionInput, prevHistory)
@@ -131,40 +126,39 @@ export default function Chat(props) {
     if (loggedIn && userProfile) setLoading(false)
   }, [loggedIn, userProfile])
 
+  useEffect(() => {
+    getChatListHeight()
+  }, [
+    questionInput,
+    promptInputRef?.current?.resizableTextArea?.textArea?.offsetHeight,
+  ])
+
   return loading ? (
     <GenericSpinner size="large" />
   ) : (
     <Layout className="chat">
-      <Row className="messages-wrapper">
+      <Row className="messages-wrapper" style={{ height: getChatListHeight() }}>
         {chatHistory.length ? (
           <Space
+            className="message-space"
             direction="vertical"
             size="middle"
-            style={{
-              height: "calc(100% - 96px)",
-              overflowY: "scroll",
-              width: "80%",
-            }}
+            style={{ height: getChatListHeight() }}
           >
             {chatHistory.map((history, _idx) => {
               const { parts, role } = history
               return (
                 <React.Fragment key={_idx.toString()}>
-                  <Row
-                    key={_idx.toString()}
-                    style={{
-                      width: "100%",
-                    }}
-                  >
-                    <ChatCard parts={parts} role={role} />
-                  </Row>
+                  <ChatCard idx={_idx} parts={parts} cardRole={role} />
                   {_idx === chatHistory.length - 1 ? (
                     <div ref={messagesEndRef}></div>
                   ) : null}
                 </React.Fragment>
               )
             })}
-            {loadingResponse && <>...Loading</>}
+            {loadingResponse && (
+              <ChatCard idx={"1"} parts={[]} cardRole={"loading"} />
+            )}
           </Space>
         ) : (
           <div>
@@ -173,28 +167,12 @@ export default function Chat(props) {
           </div>
         )}
       </Row>
-      <Row
-        style={{
-          alignItems: "center",
-          justifyContent: "center",
-          width: "100%",
-          position: "relative",
-          bottom: "48px",
-        }}
-      >
-        <TextArea
-          autoSize={{
-            minRows: 1,
-            maxRows: 8,
-          }}
-          placeholder="Enter a prompt here"
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onPressEnter={handleSearch}
-          style={{ width: "60%" }}
-          value={questionInput}
-        />
-      </Row>
+      <PromptInput
+        ref={promptInputRef}
+        handleSearch={handleSearch}
+        questionInput={questionInput}
+        setQuestionInput={setQuestionInput}
+      />
     </Layout>
   )
 }
