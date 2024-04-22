@@ -18,7 +18,7 @@ export default function CustomFooter(props) {
     >
       {!loggedIn ? null : (
         <>
-          Brain Bot may produce inaccurate information about peoples places or
+          Brain Bot may produce inaccurate information about people, places or
           facts. Please refer to to the {`firm's`} guidelines on use of
           generative AI.
         </>
