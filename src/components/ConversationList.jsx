@@ -1,17 +1,6 @@
 import React, { useContext, useState } from "react"
-import { DeleteOutlined, PlusCircleOutlined } from "@ant-design/icons"
-import {
-  App,
-  Button,
-  Col,
-  Grid,
-  Layout,
-  List,
-  Popconfirm,
-  Row,
-  Space,
-  Typography,
-} from "antd"
+import { DeleteOutlined } from "@ant-design/icons"
+import { App, Button, Col, List, Popconfirm, Row, Typography } from "antd"
 import { useNavigate } from "react-router-dom"
 
 import GenericSpinner from "./GenericSpinner"
@@ -21,14 +10,14 @@ import { ChatContext } from "../context/ChatContext"
 
 const { Paragraph, Title } = Typography
 
-export default function ConversationList(props) {
+export default function ConversationList() {
   const navigate = useNavigate()
   const { message } = App.useApp()
 
   // Context
   const authContext = useContext(AuthContext)
   const chatContext = useContext(ChatContext)
-  const { loggedIn, user, userProfile } = authContext
+  const { userProfile } = authContext
   const { allChats, allChatsLoading, getChatHistory } = chatContext
 
   // Handlers
@@ -82,17 +71,18 @@ export default function ConversationList(props) {
                     </Col>
                     <Col span={4}>
                       <Popconfirm
-                        style={{ display: hover ? undefined : "none" }}
-                        title="Delete this chat?"
+                        cancelText="No"
                         description="Confirm to delete this chat?"
                         onConfirm={() => handleDelete(id, title)}
                         okText="Yes"
-                        cancelText="No"
+                        placement="right"
+                        style={{ display: hover ? undefined : "none" }}
+                        title="Delete this chat?"
                       >
                         <Button
-                          icon={<DeleteOutlined type="ghost" />}
+                          icon={<DeleteOutlined />}
                           style={{ display: hover ? undefined : "none" }}
-                          // onClick={() => handleDelete(id)}
+                          type="ghost"
                         />
                       </Popconfirm>
                     </Col>
