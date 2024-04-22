@@ -27,7 +27,7 @@ function App() {
             <CustomHeader />
             <Layout>
               <CustomSider />
-              <Layout>
+              <Layout className="route-layout">
                 <Routes>
                   <Route path="/" element={<Chat />} />
                   <Route path="/login" element={<Login />} />
