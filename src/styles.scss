@@ -98,10 +98,11 @@ code {
 }
 
 .footer {
+  align-items: center;
   color: white;
-  height: $footer-height;
-  padding-bottom: 12px;
-  padding-top: 12px;
+  display: flex;
+  height: 48px;
+  justify-content: center;
   text-align: center;
 }
 
